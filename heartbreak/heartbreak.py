@@ -56,8 +56,6 @@ def trpo_gym_tf_music(ctxt=None, seed=1):
         
         trainer.setup(algo, env)
 
-        print("!!!")
         trainer.train(n_epochs=120, batch_size=1)
-        print("!")
 
 trpo_gym_tf_music()
