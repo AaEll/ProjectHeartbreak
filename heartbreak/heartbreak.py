@@ -15,8 +15,8 @@ import gym
 
 
 @wrap_experiment
-def trpo_gym_tf_music(ctxt=None, seed=1):
-    """Train TRPO with Music-v0 environment.
+def tf_gym_music(ctxt=None, seed=1):
+    """Train Policy Gradient LSTM with Music-v0 environment.
     Args:
         ctxt (garage.experiment.ExperimentContext): The experiment
             configuration used by Trainer to create the snapshotter.
@@ -27,10 +27,11 @@ def trpo_gym_tf_music(ctxt=None, seed=1):
     """
 
     set_seed(seed)
+
     with TFTrainer(snapshot_config=ctxt) as trainer:
 
-        #env = GymEnv(gym.make('Pendulum-v0')) #
         env = GymEnv(MusicEnv(monitor = HeartMonitor('DC:39:39:66:26:1F')),max_episode_length = 35) 
+        
         policy = GaussianLSTMPolicy(name='policy',
                                     env_spec=env.spec,
                                     hidden_dim= 32)
@@ -46,7 +47,6 @@ def trpo_gym_tf_music(ctxt=None, seed=1):
                                is_tf_worker=False,
                                n_workers = 1,
                               )
-        #replay_buffer = PathBuffer( env_spec = env.spec, capacity_in_transitions = 2000) 
         
         algo = NPO(env_spec = env.spec,
                     policy = policy,
@@ -56,6 +56,6 @@ def trpo_gym_tf_music(ctxt=None, seed=1):
         
         trainer.setup(algo, env)
 
-        trainer.train(n_epochs=120, batch_size=1)
+        trainer.train(n_epochs=120, batch_size=1,store_episodes = True)
 
-trpo_gym_tf_music()
+tf_gym_music()
